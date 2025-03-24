@@ -2,13 +2,15 @@ from flask import Flask, render_template, request, send_from_directory, url_for
 from flask_socketio import SocketIO
 from werkzeug.utils import secure_filename
 import os
+from flask_cors import CORS
 
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-socketio = SocketIO(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
 @app.route("/patient")
 def patient():
