@@ -9,16 +9,20 @@ export default function StaffScreen() {
 
   useEffect(() => {
     socket.on("request_assistance", (data) => {
-      const roomNum = parseInt(data.room)
+      console.log("Reached here again");
+      console.log(data);
+      const roomNum = parseInt(data.room); // Ensure room number is an integer
+      console.log(roomNum.toString());
       if (!activeRooms.includes(roomNum)) {
-        setActiveRooms((prev) => [...prev, roomNum])
+        setActiveRooms((prev) => [...prev, roomNum]);
       }
-    })
-
+    });
+  
     return () => {
-      socket.off("request_assistance")
-    }
-  }, [activeRooms])
+      socket.off("request_assistance");
+    };
+  }, [activeRooms]);
+  
 
   const handleAcknowledge = (room: number) => {
     setActiveRooms((prev) => prev.filter((r) => r !== room))
