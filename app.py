@@ -10,6 +10,38 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
+
+patient_db = {
+    "Bob":{
+        "Appointments": {
+            "Past":[
+                {"Date":"2024-03-01","Time":"5pm","Type":"Surgery","Room":1},
+                {"Date":"2023-12-11","Time":"2pm","Type":"Consultation","Room":2}
+            ],
+            "Missed":[
+                {"Date":"2024-03-17","Time":"4pm","Type":"Surgery Follow-up","Room":3}
+            ],
+            "Upcoming":[
+                {"Date":"2024-03-17","Time":"4pm","Type":"Surgery Follow-up","Room":4}
+            ]
+        },
+        "Invoices":[
+            {"Date":"2024-03-01","Time":"5pm","Amount":1000},
+            {"Date":"2023-12-11","Time":"2pm","Amount":95}
+        ],
+        "Medication":{ # Dict to iterate through the dates for the filter
+            "2024-03-01":[
+                {"Medicine":"Paracetamol","Dosage":"500mg","Quantity":10},
+                {"Medicine":"Amoxicillin","Dosage":"500mg","Quantity":20}
+            ],
+            "2023-12-11":[
+                {"Medicine":"Ibuprofen","Dosage":"400mg","Quantity":10}
+            ]
+        }
+    }
+}
+
+
 @app.route("/patient")
 def patient():
     return render_template("patient_screen.html")
@@ -34,6 +66,29 @@ def assistance():
 @app.route("/staff")
 def staff():
     return render_template("staff_screen.html")
+
+@app.route("/<patientname>/appointments")
+def appointments(patientname):
+    past_appointments = patient_db[patientname]["Appointments"]["Past"] # List of dictionaries
+    missed_appointments = patient_db[patientname]["Appointments"]["Missed"]
+    # Assume in this case that upcoming appointment refers to the appointment that the 
+    # patient is in the clinic for. The room number can be derived from here rather than manual entering
+    upcoming_appointments = patient_db[patientname]["Appointments"]["Upcoming"]
+    return render_template("", 
+                           past_appointments=past_appointments,
+                           missed_appointments=missed_appointments,
+                           upcoming_appointments=upcoming_appointments
+                           )
+
+@app.route("/<patientname>/medication")
+def medications(patientname):
+    medication_records = patient_db[patientname]["Medication"]
+    return render_template("", medication_records=medication_records) # placeholder page
+
+@app.route("/<patientname>/invoices")
+def invoices(patientname):
+    invoice_records = patient_db[patientname]["Invoices"]
+    return render_template("", invoice_records=invoice_records) 
 
 @app.route("/file_upload", methods=["GET", "POST"])
 def file_upload():
