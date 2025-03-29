@@ -48,7 +48,7 @@ const PatientScreen: React.FC<PatientScreenProps> = ({ name, room }) => {
       console.log("Success response:", data);
 
       setCalledHelp(true);
-      setTimeout(() => setCalledHelp(false), 15000);
+      setTimeout(() => setCalledHelp(false), 5000);
     } catch (error) {
       console.error("Full error details:", error);
       alert(

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, } from "react";
 import { io } from "socket.io-client";
-import { Card, Row, Col } from "antd";
+import { Card, Row, Col, Button } from "antd";
 import "./StaffScreen.css";
+import { useNavigate } from "react-router-dom";
 
 const socket = io("http://localhost:5000", {
   transports: ["websocket"],
@@ -14,6 +15,7 @@ interface RoomRequest {
 
 const StaffScreen: React.FC = () => {
   const [activeRooms, setActiveRooms] = useState<RoomRequest[]>([]);
+  const navigate = useNavigate(); // <--- for navigation
 
   useEffect(() => {
     socket.on("new_request", (data: { room: string; timestamp: number }) => {
@@ -69,8 +71,7 @@ const StaffScreen: React.FC = () => {
       <h1 style={{ textAlign: "center", marginBottom: 24 }}>
         Patient Assistance Requests
       </h1>
-
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} justify='center'>
         {Array.from({ length: 6 }).map((_, i) => {
           const roomNum = i + 1;
           const roomData = activeRooms.find((r) => r.room === roomNum);
@@ -113,6 +114,13 @@ const StaffScreen: React.FC = () => {
             </Col>
           );
         })}
+      </Row>
+      <Row gutter={[16, 16]} justify="center"  style={{ marginTop: 24 }}>
+        <Col>
+          <Button type="primary" onClick={() => navigate("/feedback")}>
+            Go to Feedback
+          </Button>
+        </Col>
       </Row>
     </div>
   );
